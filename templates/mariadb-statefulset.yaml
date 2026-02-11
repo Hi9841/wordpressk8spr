@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"StatefulSet","metadata":{"annotations":{},"name":"mariadb","namespace":"default"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"wordpress-mysql"}},"serviceName":"wordpress-mysql","template":{"metadata":{"labels":{"app":"wordpress-mysql"}},"spec":{"containers":[{"env":[{"name":"MYSQL_ROOT_PASSWORD","value":"example"},{"name":"MYSQL_DATABASE","value":"wordpress"},{"name":"MYSQL_USER","value":"wordpress"},{"name":"MYSQL_PASSWORD","value":"example"}],"image":"992382545251.dkr.ecr.us-east-1.amazonaws.com/my-mariadb:v1","name":"mariadb","ports":[{"containerPort":3306}],"volumeMounts":[{"mountPath":"/var/lib/mysql","name":"mysql-persistent-storage"}]}]}},"volumeClaimTemplates":[{"metadata":{"name":"mysql-persistent-storage"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"1Gi"}}}}]}}
+  creationTimestamp: "2026-02-10T17:51:01Z"
+  generation: 1
+  name: mariadb
+  namespace: default
+  resourceVersion: "6467"
+  uid: 0c1f4ff7-36fc-4a74-9e01-ef6436b45c47
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: wordpress-mysql
+  serviceName: wordpress-mysql
+  template:
+    metadata:
+      labels:
+        app: wordpress-mysql
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: example
+        - name: MYSQL_DATABASE
+          value: wordpress
+        - name: MYSQL_USER
+          value: wordpress
+        - name: MYSQL_PASSWORD
+          value: example
+        image: 992382545251.dkr.ecr.us-east-1.amazonaws.com/my-mariadb:v1
+        imagePullPolicy: IfNotPresent
+        name: mariadb
+        ports:
+        - containerPort: 3306
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-persistent-storage
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      partition: 0
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: mysql-persistent-storage
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      volumeMode: Filesystem
+    status:
+      phase: Pending
+status:
+  availableReplicas: 1
+  collisionCount: 0
+  currentReplicas: 1
+  currentRevision: mariadb-f497bf54f
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1
+  updateRevision: mariadb-f497bf54f
+  updatedReplicas: 1
